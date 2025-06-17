@@ -39,7 +39,7 @@ cd trendyol-product-scraper
 This project uses [Go modules](https://blog.golang.org/using-go-modules).
 
 ```bash
-go mod init trendyol-scraper
+go mod init trendyol-home-products-api
 go get github.com/xuri/excelize/v2
 ```
 
