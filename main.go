@@ -88,7 +88,7 @@ func main() {
 		}
 
 		allProducts = append(allProducts, pageResp.Result.Products...)
-		fmt.Printf("Page %d: %d ürün eklendi\n", page, len(pageResp.Result.Products))
+		fmt.Printf("Page %d: %d products have been added \n", page, len(pageResp.Result.Products))
 	}
 
 	// Result
