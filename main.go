@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/xuri/excelize/v2"
 )
 
 type ApiResponse struct {
@@ -93,4 +95,38 @@ func main() {
 	for _, product := range allProducts {
 		fmt.Printf("ID: %d | Name: %s | Price: %.2f TL\n", product.ID, product.Name, product.Price.SellingPrice)
 	}
+
+	// Create excel file
+	f := excelize.NewFile()
+	sheet := "Products"
+	f.NewSheet(sheet)
+
+	// Headers
+	headers := []string{"ID", "Name", "Price (TL)"}
+	for i, h := range headers {
+		cell := fmt.Sprintf("%c1", 'A'+i)
+		f.SetCellValue(sheet, cell, h)
+	}
+
+	// Add products
+	for i, p := range allProducts {
+		row := i + 2 // Row 1 is for headers
+		f.SetCellValue(sheet, fmt.Sprintf("A%d", row), p.ID)
+		f.SetCellValue(sheet, fmt.Sprintf("B%d", row), p.Name)
+		f.SetCellValue(sheet, fmt.Sprintf("C%d", row), p.Price.SellingPrice)
+	}
+
+	// Set active sheet and save the file
+	index, err := f.GetSheetIndex(sheet)
+	if err != nil {
+		log.Fatalf("Failed to get sheet index: %v", err)
+	}
+	f.SetActiveSheet(index)
+
+	if err := f.SaveAs("trendyol_products_davlumbaz.xlsx"); err != nil {
+		log.Fatalf("Failed to save Excel file: %v", err)
+	}
+
+	fmt.Println("Excel file created: trendyol_products_davlumbaz.xlsx")
+
 }
