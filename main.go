@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -22,10 +23,26 @@ type ApiResponse struct {
 }
 
 type Product struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
+	ID                int    `json:"id"`
+	Name              string `json:"name"`
+	ProductID         int    `json:"productGroupId"`
+	CardType          string `json:"cardType"`
+	CategoryHierarchy string `json:"categoryHierarchy"`
+	CategoryId        int    `json:"categoryId"`
+	CategoryName      string `json:"categoryName"`
+	Url               string `json:"url"`
+	MerchantId        int    `json:"merchantId"`
+	CampaignName      string `json:"campaignName"`
+	ItemNumber        int    `json:"itemNumber"`
+	Brand             struct {
+		BrandID   int    `json:"id"`
+		BrandName string `json:"name"`
+	}
 	Price struct {
-		SellingPrice float64 `json:"sellingPrice"`
+		SellingPrice    float64 `json:"sellingPrice"`
+		OriginalPrice   float64 `json:"originalPrice"`
+		DiscountedPrice float64 `json:"discountedPrice"`
+		BuyingPrice     float64 `json:"buyingPrice"`
 	} `json:"price"`
 }
 
@@ -93,7 +110,8 @@ func main() {
 
 	// Result
 	for _, product := range allProducts {
-		fmt.Printf("ID: %d | Name: %s | Price: %.2f TL\n", product.ID, product.Name, product.Price.SellingPrice)
+		fmt.Printf("procuct_id %d | name: %s | productGroupId: %d | cardType: %s | categoryHierarchy: %s | categoryId: %d | categoryName: %s | url: %s |  merchantId: %d | campaignName: %s | itemNumber: %d | brandId: %d | brandName: %s | sellingPrice: %.2f TL | originalPrice: %.2f | discountedPrice: %.2f | buyingPrice: %.2f | brandName: %s | categoryName: %s\n",
+			product.ID, product.Name, product.ProductID, product.CardType, product.CategoryHierarchy, product.CategoryId, product.CategoryName, product.Url, product.MerchantId, product.CampaignName, product.ItemNumber, product.Brand.BrandID, product.Brand.BrandName, product.Price.SellingPrice, product.Price.OriginalPrice, product.Price.DiscountedPrice, product.Price.BuyingPrice, product.Brand.BrandName, product.CategoryName)
 	}
 
 	// Create excel file
@@ -101,8 +119,15 @@ func main() {
 	sheet := "Products"
 	f.NewSheet(sheet)
 
+	today := time.Now().Format("2006-01-02") // YYYY-MM-DD
+
 	// Headers
-	headers := []string{"ID", "Name", "Price (TL)"}
+	headers := []string{
+		"product_id", "name", "productGroupId", "cardType", "categoryHierarchy", "categoryId",
+		"categoryName", "url", "merchantId", "campaignName", "itemNumber",
+		"brand_id", "brand_name", "sellingPrice", "originalPrice", "discountedPrice", "buyingPrice",
+		"marka", "yma_category", "scraped_date",
+	}
 	for i, h := range headers {
 		cell := fmt.Sprintf("%c1", 'A'+i)
 		f.SetCellValue(sheet, cell, h)
@@ -113,7 +138,24 @@ func main() {
 		row := i + 2 // Row 1 is for headers
 		f.SetCellValue(sheet, fmt.Sprintf("A%d", row), p.ID)
 		f.SetCellValue(sheet, fmt.Sprintf("B%d", row), p.Name)
-		f.SetCellValue(sheet, fmt.Sprintf("C%d", row), p.Price.SellingPrice)
+		f.SetCellValue(sheet, fmt.Sprintf("C%d", row), p.ProductID)
+		f.SetCellValue(sheet, fmt.Sprintf("D%d", row), p.CardType)
+		f.SetCellValue(sheet, fmt.Sprintf("E%d", row), p.CategoryHierarchy)
+		f.SetCellValue(sheet, fmt.Sprintf("F%d", row), p.CategoryId)
+		f.SetCellValue(sheet, fmt.Sprintf("G%d", row), p.CategoryName)
+		f.SetCellValue(sheet, fmt.Sprintf("H%d", row), p.Url)
+		f.SetCellValue(sheet, fmt.Sprintf("I%d", row), p.MerchantId)
+		f.SetCellValue(sheet, fmt.Sprintf("J%d", row), p.CampaignName)
+		f.SetCellValue(sheet, fmt.Sprintf("K%d", row), p.ItemNumber)
+		f.SetCellValue(sheet, fmt.Sprintf("L%d", row), p.Brand.BrandID)
+		f.SetCellValue(sheet, fmt.Sprintf("M%d", row), p.Brand.BrandName)
+		f.SetCellValue(sheet, fmt.Sprintf("N%d", row), p.Price.SellingPrice)
+		f.SetCellValue(sheet, fmt.Sprintf("O%d", row), p.Price.OriginalPrice)
+		f.SetCellValue(sheet, fmt.Sprintf("P%d", row), p.Price.DiscountedPrice)
+		f.SetCellValue(sheet, fmt.Sprintf("Q%d", row), p.Price.BuyingPrice)
+		f.SetCellValue(sheet, fmt.Sprintf("R%d", row), p.Brand.BrandName)
+		f.SetCellValue(sheet, fmt.Sprintf("S%d", row), p.CategoryName)
+		f.SetCellValue(sheet, fmt.Sprintf("T%d", row), today)
 	}
 
 	// Set active sheet and save the file
@@ -123,10 +165,10 @@ func main() {
 	}
 	f.SetActiveSheet(index)
 
-	if err := f.SaveAs("trendyol_products_davlumbaz.xlsx"); err != nil {
+	if err := f.SaveAs("trendyol_products_davlumbaz_formatted.xlsx"); err != nil {
 		log.Fatalf("Failed to save Excel file: %v", err)
 	}
 
-	fmt.Println("Excel file created: trendyol_products_davlumbaz.xlsx")
+	fmt.Println("Excel file created: trendyol_products_davlumbaz_formatted.xlsx")
 
 }
