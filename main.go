@@ -47,14 +47,15 @@ type Product struct {
 }
 
 func main() {
-	baseURL := "https://apigw.trendyol.com/discovery-web-searchgw-service/v2/api/infinite-scroll/davlumbaz-x-c103627"
+	//baseURL := "https://apigw.trendyol.com/discovery-web-searchgw-service/v2/api/infinite-scroll/duduklu-tencere-x-c101506?culture=tr-TR&userGenderId=1&channelId=1"
+	baseURL := "https://apigw.trendyol.com/discovery-web-searchgw-service/v2/api/infinite-scroll/tencere-x-c1191?culture=tr-TR&userGenderId=1&channelId=1&prc=15000-*"
 	pageSize := 24
 
 	allProducts := []Product{}
 
 	// First page request
 	firstPage := 1
-	url := fmt.Sprintf("%s?pi=%d&culture=tr-TR&userGenderId=1&channelId=1", baseURL, firstPage)
+	url := fmt.Sprintf("%s&pi=%d", baseURL, firstPage)
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -82,8 +83,8 @@ func main() {
 	fmt.Printf("Total page number: %d\n", totalPages)
 
 	//
-	for page := 2; page <= totalPages; page++ {
-		url := fmt.Sprintf("%s?pi=%d&culture=tr-TR&userGenderId=1&channelId=1", baseURL, page)
+	for page := 1; page <= totalPages; page++ {
+		url := fmt.Sprintf("%s&pi=%d", baseURL, page)
 
 		resp, err := http.Get(url)
 		if err != nil {
@@ -165,10 +166,10 @@ func main() {
 	}
 	f.SetActiveSheet(index)
 
-	if err := f.SaveAs("trendyol_products_davlumbaz_formatted.xlsx"); err != nil {
+	if err := f.SaveAs("trendyol_products_tencere_seti_15000_end.xlsx"); err != nil {
 		log.Fatalf("Failed to save Excel file: %v", err)
 	}
 
-	fmt.Println("Excel file created: trendyol_products_davlumbaz_formatted.xlsx")
+	fmt.Println("Excel file created: trendyol_products_duduklu.xlsx")
 
 }
