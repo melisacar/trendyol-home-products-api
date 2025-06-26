@@ -61,7 +61,7 @@ cd trendyol-home-products-api
 ### 2. Install dependencies
 
 ```bash
-go mod init trendyol-tencere-scraper
+go mod init trendyol-home-products-api
 go get github.com/xuri/excelize/v2
 ```
 
