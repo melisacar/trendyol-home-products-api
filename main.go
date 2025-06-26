@@ -170,6 +170,6 @@ func main() {
 		log.Fatalf("Failed to save Excel file: %v", err)
 	}
 
-	fmt.Println("Excel file created: trendyol_products_duduklu.xlsx")
+	fmt.Println("Excel file created: trendyol_products_tencere_seti_15000_end.xlsx")
 
 }
